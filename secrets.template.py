@@ -1,9 +1,7 @@
-SERVICE_ACCESS_TOKEN = 'hello'
+SERVICE_ACCESS_TOKEN = ''
 MYSQL = {
-    'user': 'adduser',
-    'password': 'w9HebKvhR',
-    'host': 'acm.illinois.edu',
-    'dbname': 'groot_user_service'
+    'user': '',
+    'password': '',
+    'host': '',
+    'dbname': ''
 }
-
-w9HebKvhR
