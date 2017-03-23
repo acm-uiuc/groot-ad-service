@@ -38,7 +38,7 @@ def addUserDaily():
 
 @app.route("/adduser/<string:netid>")
 def addUser(netid):
-	request.headers['your-header-name']
+	# request.headers['your-header-name']
     return runScript(netid)
 
 @app.route("/")
