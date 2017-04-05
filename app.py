@@ -23,24 +23,22 @@ def runScript(netid):
     result = execproc.wait()
     return result
 
-
-
 @scheduler.scheduled_job('interval', days=1, next_run_time=datetime.now())
-@app.route("/adduser/test")
-	def addUserDaily():
-		paidUsers = Users.query.filter_by(added_to_directory=False).filter_by(is_member=True).all()
-		
-		for user in paidUsers:
-			# runScript(user.netid)
-			Users.query.filter_by(netid=user.netid).update(added_to_directory=True)
-			Users.commit()
-		return 1
+@app.route("/adduser/scheduled")
+def addUserDaily():
+	paidUsers = Users.query.filter_by(added_to_directory=False).filter_by(is_member=True).all()
+	for user in paidUsers:
+		runScript(user.netid)
+		Users.query.filter_by(netid=user.netid).update(added_to_directory=True)
+		Users.commit()
+	return 1
 
 @app.route("/adduser/<string:netid>")
 def addUser(netid):
 	if request.headers.get('SERVICE_ACCESS_TOKEN') == SERVICE_ACCESS_TOKEN:
 		output = runScript(netid)
-		return make_response(jsonify(dict(message="asdfasdf")), 200)
+        print(output)
+		return make_response(jsonify(dict(message=str("Added the user." + output))), 200)
 	else:
 		return make_response(jsonify(dict(error="Please include the correct access token in the header.")), 401)
 
@@ -54,5 +52,4 @@ db.create_all(app=app)
 if __name__ == "__main__":
     app.run(port=5000, host='0.0.0.0')
 
-# pip freeze > requirements.txt 
-
+# pip freeze > requirements.txt
