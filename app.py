@@ -1,4 +1,5 @@
-import subprocess, os
+import subprocess
+import os
 from flask import Flask, jsonify, request, make_response
 from flask_sqlalchemy import SQLAlchemy
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -18,38 +19,42 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://{}:{}@{}/{}'.format(
 
 def runScript(netid):
     execproc = subprocess.Popen([r'powershell.exe',
-                                 './user_creation.ps1',
-                                 netid], cwd=os.getcwd())
+    './user_creation.ps1',
+    netid], cwd=os.getcwd())
     result = execproc.wait()
     return result
 
 @scheduler.scheduled_job('interval', days=1, next_run_time=datetime.now())
-@app.route("/adduser/scheduled")
+@app.route("/addUser/scheduled")
 def addUserDaily():
-	paidUsers = Users.query.filter_by(added_to_directory=False).filter_by(is_member=True).all()
-	for user in paidUsers:
-		runScript(user.netid)
-		Users.query.filter_by(netid=user.netid).update(added_to_directory=True)
-		Users.commit()
-	return 1
+    paidUsers = Users.query.filter_by(added_to_directory=False).filter_by(is_member=True).all()
+    print(paidUsers)
+    for user in paidUsers:
+        print(runScript(user.netid))
+        user.added_to_directory = True
+        # Users.query.filter_by(netid=user.netid).update(dict(added_to_directory=True))
+        db.session.commit()
+    return '1'
 
-@app.route("/adduser/<string:netid>")
+@app.route("/addUser/<string:netid>")
 def addUser(netid):
-	if request.headers.get('SERVICE_ACCESS_TOKEN') == SERVICE_ACCESS_TOKEN:
-		output = runScript(netid)
-        print(output)
-		return make_response(jsonify(dict(message=str("Added the user." + output))), 200)
-	else:
-		return make_response(jsonify(dict(error="Please include the correct access token in the header.")), 401)
+    if request.headers.get('Authorization') == SERVICE_ACCESS_TOKEN:
+        output = runScript(netid)
+        # print(output)
+        paidUsers = Users.query.filter(added_to_directory=False).filter_by(is_member=True).all()
+
+        return make_response(jsonify(dict(message=str("Added the user." + str(output)))), 200)
+    else:
+        return make_response(jsonify(dict(error="Please include the correct access token in the header.")), 401)
 
 @app.route("/")
 def root():
-	 return make_response(jsonify(dict(message="hello")), 200)
+    return make_response(jsonify(dict(message="hello")), 200)
 
 db.init_app(app)
 db.create_all(app=app)
 
 if __name__ == "__main__":
-    app.run(port=5000, host='0.0.0.0')
+    app.run(port=80, host='0.0.0.0')
 
 # pip freeze > requirements.txt
