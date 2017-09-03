@@ -17,39 +17,45 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://{}:{}@{}/{}'.format(
     MYSQL['dbname']
 )
 
+def verifyAddition(netid):
+    execproc = subprocess.Popen([r'powershell.exe',
+    './verify_ad_addition.ps1',
+    netid], cwd=os.getcwd())
+    result = execproc.wait()
+    if(result == "1"):
+        Users.query.filter_by(netid=netid).update(dict(added_to_directory=True))
+        return True
+
 def runScript(netid):
     execproc = subprocess.Popen([r'powershell.exe',
-    './user_creation.ps1',
+    './user_creation_v2.ps1',
     netid], cwd=os.getcwd())
     result = execproc.wait()
     return result
 
 @scheduler.scheduled_job('interval', days=1, next_run_time=datetime.now())
-@app.route("/addUser/scheduled")
 def addUserDaily():
     paidUsers = Users.query.filter_by(added_to_directory=False).filter_by(is_member=True).all()
     print(paidUsers)
     for user in paidUsers:
-        print(runScript(user.netid))
-        user.added_to_directory = True
-        # Users.query.filter_by(netid=user.netid).update(dict(added_to_directory=True))
-        db.session.commit()
-    return '1'
+        runScript(user.netid)
+        verifyAddition(user.netid)
 
-@app.route("/addUser/<string:netid>")
+@app.route("/activedirectory/add/<string:netid>")
 def addUser(netid):
     if request.headers.get('Authorization') == SERVICE_ACCESS_TOKEN:
         output = runScript(netid)
-        # print(output)
-        paidUsers = Users.query.filter(added_to_directory=False).filter_by(is_member=True).all()
+        if(verifyAddition(netid)):
+            return make_response(jsonify(dict(message=str("Added the user." + str(output)))), 200)
+        else:
+            return make_response(jsonify(dict(error="There was an error.")), 400)
 
-        return make_response(jsonify(dict(message=str("Added the user." + str(output)))), 200)
     else:
         return make_response(jsonify(dict(error="Please include the correct access token in the header.")), 401)
 
 @app.route("/")
 def root():
-    return make_response(jsonify(dict(message="hello")), 200)
+    return make_response(jsonify(dict(message="Welcome!")), 200)
 
 db.init_app(app)
 db.create_all(app=app)
