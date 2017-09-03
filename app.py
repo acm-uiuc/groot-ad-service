@@ -20,10 +20,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://{}:{}@{}/{}'.format(
 def verifyAddition(netid):
     execproc = subprocess.Popen([r'powershell.exe',
     './verify_ad_addition.ps1',
-    netid], cwd=os.getcwd())
-    result = execproc.wait()
-    if(result == "1"):
+    netid], stdout=subprocess.PIPE, cwd=os.getcwd())
+    out, err = execproc.communicate()
+    if(out.decode().strip() == "1"):
         Users.query.filter_by(netid=netid).update(dict(added_to_directory=True))
+        db.session.commit()
         return True
 
 def runScript(netid):
@@ -46,7 +47,7 @@ def addUser(netid):
     if request.headers.get('Authorization') == SERVICE_ACCESS_TOKEN:
         output = runScript(netid)
         if(verifyAddition(netid)):
-            return make_response(jsonify(dict(message=str("Added the user." + str(output)))), 200)
+            return make_response(jsonify(dict(message=str("Added the user.")), 200)
         else:
             return make_response(jsonify(dict(error="There was an error.")), 400)
 

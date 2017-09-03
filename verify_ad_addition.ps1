@@ -11,8 +11,8 @@ if (-not $netid)
 $ACM = Get-ADGroupMember -Identity "engr-acm-users" -Recursive | Select -ExpandProperty Name
 
 If ($members -contains $user) {
-    Write-Host "1"
+    "1"
 }
 Else {
-    Write-Host "0"
+    "0"
 }
