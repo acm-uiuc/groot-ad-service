@@ -1,4 +1,6 @@
 # groot-ad-service
+[![Join the chat at https://acm-uiuc.slack.com/messages/C6XGZD212/](https://img.shields.io/badge/slack-groot-724D71.svg)](https://acm-uiuc.slack.com/messages/C6XGZD212/)
+
 A service that triggers a script that adds members to the ACM Active Directory group once they have paid membership fees.
 ## Install / Setup
 1. Clone repo:
