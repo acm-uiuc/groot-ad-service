@@ -2,11 +2,8 @@ import subprocess
 import os
 from flask import Flask, jsonify, request, make_response
 from secrets import SERVICE_ACCESS_TOKEN
-from datetime import datetime
-from models import Users, db
 
 app = Flask(__name__)
-
 
 def verifyAddition(netid):
     execproc = subprocess.Popen([r'powershell.exe',
@@ -46,9 +43,6 @@ def addUser(netid):
 def root():
     return make_response(jsonify(dict(message="Welcome!")), 200)
 
-
-db.init_app(app)
-db.create_all(app=app)
 
 if __name__ == "__main__":
     app.run(port=80, host='0.0.0.0')
