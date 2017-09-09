@@ -5,10 +5,12 @@ from secrets import SERVICE_ACCESS_TOKEN
 
 app = Flask(__name__)
 
+
 def verifyAddition(netid):
     execproc = subprocess.Popen([r'powershell.exe',
-                                './verify_ad_addition.ps1',
-                                netid], stdout=subprocess.PIPE, cwd=os.getcwd())
+                                 './verify_ad_addition.ps1',
+                                 netid], stdout=subprocess.PIPE,
+                                cwd=os.getcwd())
     out, err = execproc.communicate()
     if(out.decode().strip() == "1"):
         return True
@@ -17,8 +19,8 @@ def verifyAddition(netid):
 
 def runScript(netid):
     execproc = subprocess.Popen([r'powershell.exe',
-                                './user_creation_v2.ps1',
-                                netid], cwd=os.getcwd())
+                                 './user_creation_v2.ps1',
+                                 netid], cwd=os.getcwd())
     result = execproc.wait()
     return result
 
@@ -26,17 +28,17 @@ def runScript(netid):
 @app.route("/activedirectory/add/<string:netid>")
 def addUser(netid):
     if request.headers.get('Authorization') == SERVICE_ACCESS_TOKEN:
-        output = runScript(netid)
+        runScript(netid)
         if(verifyAddition(netid)):
             return make_response(jsonify(dict(message=str("Added the user."))),
-                                    200)
+                                 200)
         else:
             return make_response(jsonify(dict(error="There was an error.")),
-                                    400)
+                                 400)
 
     else:
-        return make_response(jsonify(dict(error="Please include the correct access token in the header.")),
-                                401)
+        return make_response(jsonify(dict(error="Please include the correct " +
+                             "access token in the header.")), 401)
 
 
 @app.route("/")
