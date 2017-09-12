@@ -1,0 +1,8 @@
+language: python
+python:
+- '2.7'
+script:
+- pip install flake8 && flake8 *.py
+notifications:
+  slack:
+    secure: JUeNiX4Y79VP1KLKeyTaRehQH6VWf1/qHY8L0tvMqPkSUfytdV8ZlTK3pjARkA6MJ7K9foubIhjPxeq1KUzn/+4u/d6eNeAd/wAwEUFI/cYzmXdSjcWGRn5Gfx2ndfAy8s8ocxSrXwX//Crihv186cd6An6O9KNfj5qSq/m2QW7HXxF6usXoeaxrgqABPzAhpYv/yU3t+bCG+izXgNdgDw+G5Ryz+ROPM4IpuqAgdn1qDYjgCm+KLIx8liXC2ZbpqwwArDCkqgc5HdskX5jbJwOyuKHCCvBeJtqa4+1pNcjafrysnbwoxNHvbfHreIE6WHq9nYSL/rvtIrn/uHNSEhadXhUwOCFphYB16FfFr7hgTB1IjmYvBjQZACYxb6944oZIHl0qPckYwydTcmCT1U+O+ewE0uh6fL833c86hXv1GBj8+9Wh2TSrSnSR2oi3muJHzxA5WZnGGbuFhi9dW37kTKMAG4NzbflHB2Lkied/adBPZRFxmThu1IQ44wfpWYW7NZ3m0pKlgkY1PbIs0Uz97JBRnpC204RtrKCOm5vHjmcIN2y5Wg+mz8MKn8HaK38pHm2haSo+AwyYgaFC0Ls9SYdc8NetfxlFs+fOillapa2uox9OrO1KQsV+bZNKL1lPqMHkBe3Gq74ROTMqFX0/yfW6Hs14zxWaDY1i/bI=
