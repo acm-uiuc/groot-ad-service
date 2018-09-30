@@ -1,5 +1,6 @@
 import subprocess
 import os
+import logging
 from flask import Flask, jsonify, request, make_response
 from flask_sqlalchemy import SQLAlchemy
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -10,11 +11,20 @@ from models import Users, db
 app = Flask(__name__)
 
 
+my_logger = logging.getLogger('MyLogger')
+my_logger.setLevel(logging.DEBUG)
+handler = logging.handlers.RotatingFileHandler(
+              LOG_FILENAME, maxBytes=20, backupCount=5)
+my_logger.addHandler(handler)
+
+
 def verifyAddition(netid):
     execproc = subprocess.Popen([r'powershell.exe',
     './verify_ad_addition.ps1',
     netid], stdout=subprocess.PIPE, cwd=os.getcwd())
     out, err = execproc.communicate()
+    my_logger.debug(out)
+    my_logger.debug(err)
     if(out.decode().strip() == "1"):
         return True
 
@@ -23,6 +33,7 @@ def runScript(netid):
     './user_creation_v2.ps1',
     netid], cwd=os.getcwd())
     result = execproc.wait()
+    my_logger.debug(result)
     return result
 
 
