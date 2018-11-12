@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, request, make_response
 import secrets
 import logging
-import json
 import ldap
 
 logger = logging.getLogger('groot_ad_service')
