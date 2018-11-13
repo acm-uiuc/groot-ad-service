@@ -29,7 +29,7 @@ python groot-ad-service/app.py
 
 ## Routes
 
-`POST /activedirectory/add/:netid`
+`POST /activedirectory/add`
 
 Adds a user to the ACM Active Directory group 
 
