@@ -28,11 +28,16 @@ python groot-ad-service/app.py
 ```
 
 ## Routes
-Requires an Authorization Token passed in through an `Authorization` header, which is set in `secrets.py`
 
-`GET /activedirectory/add/:netid`
+`POST /activedirectory/add`
 
-Adds the member with the provided netid to the ACM Active Directory group 
+Adds a user to the ACM Active Directory group 
+
+*Params:*
+
+*  `netid` - NetID of the user.
+
+    * Required
 
 ## Contributing
 
